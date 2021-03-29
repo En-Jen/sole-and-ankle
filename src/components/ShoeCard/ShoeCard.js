@@ -36,14 +36,34 @@ const ShoeCard = ({
 			<Wrapper>
 				<ImageWrapper>
 					<Image alt="" src={imageSrc} />
+					{variant === 'on-sale' && <SaleFlag>Sale</SaleFlag>}
+					{variant === 'new-release' && (
+						<NewFlag>Just Released!</NewFlag>
+					)}
 				</ImageWrapper>
 				<Spacer size={12} />
 				<Row>
 					<Name>{name}</Name>
-					<Price>{formatPrice(price)}</Price>
+					<Price
+						style={{
+							'--color':
+								variant === 'on-sale'
+									? COLORS.gray[700]
+									: undefined,
+							'--text-decoration':
+								variant === 'on-sale'
+									? 'line-through'
+									: undefined,
+						}}
+					>
+						{formatPrice(price)}
+					</Price>
 				</Row>
 				<Row>
 					<ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+					{variant === 'on-sale' && (
+						<SalePrice>{formatPrice(salePrice)}</SalePrice>
+					)}
 				</Row>
 			</Wrapper>
 		</Link>
@@ -53,11 +73,32 @@ const ShoeCard = ({
 const Link = styled.a`
 	text-decoration: none;
 	color: inherit;
-	flex: 0 1 340px;
-  margin-bottom: 64px;
 `;
 
-const Wrapper = styled.article``;
+const Wrapper = styled.article`
+	position: relative;
+`;
+
+const Flag = styled.div`
+	font-size: ${14 / 18}rem;
+	font-weight: ${WEIGHTS.bold};
+	color: ${COLORS.white};
+	padding: 8px 10px;
+	background-color: hsl(240deg 60% 63%);
+	border-radius: 2px;
+	position: absolute;
+	top: 12px;
+	right: -4px;
+	z-index: 1;
+`;
+
+const SaleFlag = styled(Flag)`
+	background-color: ${COLORS.primary};
+`;
+
+const NewFlag = styled(Flag)`
+	background-color: ${COLORS.secondary};
+`;
 
 const ImageWrapper = styled.div`
 	position: relative;
@@ -66,13 +107,13 @@ const ImageWrapper = styled.div`
 const Image = styled.img`
 	width: 100%;
 	display: block;
-  border-radius: 16px 16px 4px 4px;
+	border-radius: 16px 16px 4px 4px;
 `;
 
 const Row = styled.div`
 	font-size: 1rem;
 	display: flex;
-  justify-content: space-between;
+	justify-content: space-between;
 `;
 
 const Name = styled.h3`
@@ -80,7 +121,10 @@ const Name = styled.h3`
 	color: ${COLORS.gray[900]};
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+	color: var(--color);
+	text-decoration: var(--text-decoration);
+`;
 
 const ColorInfo = styled.p`
 	color: ${COLORS.gray[700]};
